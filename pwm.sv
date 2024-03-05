@@ -1,5 +1,5 @@
 module pwm_driver #(
-    parameter PWM_SIZE = 16
+    parameter PWM_SIZE = 32
 ) (
     input logic clk,
     input logic rst,
@@ -13,7 +13,7 @@ logic [PWM_SIZE-1:0] duty_counter;
 logic done = 0;
 logic out = 0;
 
-always_ff @( posedge clk ) begin : PWM
+always @( posedge clk ) begin : PWM
     if (rst | done) begin    
         {done,period_counter} <= pwm_period-1;
         {out, duty_counter} <= pwm_duty-1;
