@@ -12,8 +12,6 @@ module uart_rx #(
     input logic parity_type, // 0 = odd, 1 = even
     output logic crc_error,
     output logic stop_error,
-    output logic CTS,
-    input logic RTS,
     input logic RX
     );
 
@@ -27,11 +25,13 @@ module uart_rx #(
 
     always_ff @(posedge clk) begin
         if (reset) begin
+            crc_error <= 0;
+            stop_error <= 0;
             data_i_buffer <= 0;
             rx_data <= 0;
             data_i_count <= 0;
-            next_state <= IDLE;
             phase_accum_reset <= 1;
+            next_state <= IDLE;
         end
         else begin
             case (current_state)

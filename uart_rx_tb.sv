@@ -18,8 +18,6 @@ module tb_uart_rx;
     logic parity_type; // 0 = odd, 1 = even
     logic crc_error;
     logic stop_error;
-    logic CTS;
-    logic RTS;
     logic RX;
 
     // Instantiate the uart_rx module
@@ -35,8 +33,6 @@ module tb_uart_rx;
         .parity_type(parity_type),
         .crc_error(crc_error),
         .stop_error(stop_error),
-        .CTS(CTS),
-        .RTS(RTS),
         .RX(RX)
     );
 
@@ -51,7 +47,6 @@ module tb_uart_rx;
         // Initialize signals
         reset = 1;
         RX = 1; // Idle state of RX is high
-        RTS = 0;
         parity_enable = 0; // Start with parity disabled
         parity_type = 0; // Odd parity (not used initially)
         baud_tick = 0;
