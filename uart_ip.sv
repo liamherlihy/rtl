@@ -1,3 +1,5 @@
+`include "G:/Engineering_work/FPGA/rtl/interfaces/axi4-lite_interface.sv"
+
 module uart_ip #(
     parameter UART_SIZE = 8,
     parameter BAUD_RATE = 115200,
@@ -7,18 +9,38 @@ module uart_ip #(
     parameter PARITY_TYPE = 0,                  //0 for odd, 1 for even
     parameter CRC_ENABLE = 0
 )(
-    input logic clk,
-    input logic reset,
-    input logic RX,
-    output logic TX,
-    output logic RTS,
-    input logic CTS
+    input wire clk,
+    input wire reset,
+    input wire RX,
+    output wire TX,
+    output wire RTS,
+    input wire CTS,
+    //TODO: add axi4-lite interface here.
+    axi4_lite.slave axi4_s
+
 );
 
-    logic baud_tick;
-    logic phase_accum_reset;
-    logic [UART_SIZE-1:0] rx_data;
+    wire baud_tick;
+    wire phase_accum_reset;
+    wire [UART_SIZE-1:0] rx_data;
+    wire gen_clock;
+    wire gen_clock_offset;
+    wire stop_error;
+    wire done;
+    
+    //TODO: add dual port fifo.
 
+    //synchronize inputs
+    external_synchronizer #(
+        .DATA_WIDTH(1)
+    ) sync_rx (
+        .clk(clk),
+        .reset(reset),
+        .data_in(RX),
+        .data_out(RX_sync)
+    );
+
+    //uart reciever
     uart_rx #(
         .UART_SIZE(UART_SIZE)
     ) uart_rx (
@@ -30,20 +52,22 @@ module uart_ip #(
         .parity_enable(PARITY_ENABLE),
         .parity_type(PARITY_TYPE),              // 0 = odd, 1 = even
         //.crc_error(),
-        //.stop_error(),
-        .RX(rx)
+        .stop_error(stop_error),
+        .RX(RX_sync),
+        .done(done)
         );
 
+    //gererate baud rate clock and 180 degree phase shift clock.
     baud_rate_generator_with_offset #(
         .SYS_CLK_FREQ(SYS_CLK_FREQ),            // System clock frequency in Hz
         .BAUD_RATE(BAUD_RATE),                  // Desired baud rate
         .PHASE_OFFSET_DEG(SAMPLE_OFFSET)        // Phase offset in degrees
     ) baud_gen (
         .clk(clk),                              // System clock input
-        .reset(resest||phase_accum_reset),      // Asynchronous reset
-        .baud_tick_offset(baud_tick),           // Baud rate tick output with 180 degree phase offset
-        .gen_clock,                             // Generated clock
-        .gen_clock_offset                       // Generated clock 180deg phase shift
+        .reset(reset||phase_accum_reset),       // Asynchronous reset
+        .baud_tick(baud_tick),                  // Baud rate tick output with 180 degree phase offset
+        .gen_clock(gen_clock),                  // Generated clock
+        .gen_clock_offset(gen_clock_offset)     // Generated clock 180deg phase shift
     );
     
 endmodule

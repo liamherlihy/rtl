@@ -6,8 +6,8 @@ module baud_rate_generator_with_offset #(
     parameter ACC_WIDTH = 32,               // Width of the phase accumulator
     parameter PHASE_OFFSET_DEG = 180        // Phase offset in degrees
 )(
-    input logic clk,                        // System clock input
-    input logic reset,                      // Asynchronous reset
+    input wire clk,                        // System clock input
+    input wire reset,                      // Asynchronous reset
     output logic baud_tick,                 // Baud rate tick output
     output logic baud_tick_offset,             // Baud rate tick output with 180 degree phase offset
     output logic gen_clock,                 // Generated clock
@@ -38,7 +38,7 @@ module baud_rate_generator_with_offset #(
         baud_tick = &test;
         baud_tick_offset = test[1]&(!test[0]);
         gen_clock  = test[0];
-        baud_tick_offset = !test[0];
+        gen_clock_offset = !test[0];
     end
     
 endmodule

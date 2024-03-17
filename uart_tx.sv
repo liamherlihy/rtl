@@ -17,6 +17,7 @@ module uart_rx #(
     );
 
     typedef enum {IDLE, START, DATA, STOP, CRC } state;
+    
     logic [UART_SIZE-1:0] data_o_buffer;
     logic [$clog2(UART_SIZE)-1:0] data_i_count, data_o_count;
 
