@@ -58,6 +58,7 @@ module simple_fifo_tb;
         @(posedge clk);
     endtask 
     
+    
     initial begin
         #20
         reset = 0;
