@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module uart_rx #(
-    parameter UART_SIZE = 8
+    parameter DATA_WIDTH = 8
     )(
     input logic clk,
     input logic reset,
@@ -18,8 +18,8 @@ module uart_rx #(
 
     typedef enum {IDLE, START, DATA, STOP, CRC } state;
     
-    logic [UART_SIZE-1:0] data_o_buffer;
-    logic [$clog2(UART_SIZE)-1:0] data_i_count, data_o_count;
+    logic [DATA_WIDTH-1:0] data_o_buffer;
+    logic [$clog2(DATA_WIDTH)-1:0] data_i_count, data_o_count;
 
     state current_state, next_state;
 

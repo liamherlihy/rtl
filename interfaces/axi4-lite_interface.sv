@@ -1,84 +1,47 @@
 interface axi4_lite #(
     parameter DATA_WIDTH = 32
     ) (
-    input logic aclk, 
-    input logic aresetn
+    input logic aclk,       //clock
+    input logic aresetn     //reset, active low
     );
 
     localparam ADDR_WIDTH = (DATA_WIDTH == 32) ? 32 : 64; //data can be 32 or 64 bits only.
-    localparam STRB_WIDTH = DATA_WIDTH / 8;
+    localparam STRB_WIDTH = DATA_WIDTH / 8; //byte strobe width 
 
-    //write address channel signals
-    logic [ADDR_WIDTH-1:0] AWADDR; 
-    logic AWVALID;                  
-    logic [2:0] AWPROT; //?
-    logic AWREADY;                 
+    //write address channel signals - done
+    logic [ADDR_WIDTH-1:0] awaddr;  //write address
+    logic awvalid;                  //address write valid
+    logic [2:0] awprot;             //write protection, 3 bit wide
+    logic awready;                  //address write ready
     //wirte data channel signals
-    logic [DATA_WIDTH-1:0] WDATA;
-    logic [STRB_WIDTH-1:0] WSTRB;
-    logic WVALID;
-    logic WREADY;
+    logic [DATA_WIDTH-1:0] wdata;   //write data
+    logic [STRB_WIDTH-1:0] wstrb;   //write strobe. Not used in axi4-lite
+    logic wvalid;                   //write data valid
+    logic wready;                   //write data ready
     //write response channel signals
-    logic [1:0] BRESP;
-    logic BVALID;
-    logic BREADY;
+    logic [1:0] bresp;              //write response
+    logic bvalid;                   //write response valid
+    logic bready;                   //write response ready
     //read address channel signals
-    logic [ADDR_WIDTH-1:0] ARADDR;
-    logic ARVALID;
-    logic [2:0] ARPROT;
-    logic ARREADY;
+    logic [ADDR_WIDTH-1:0] araddr;  //read address
+    logic arvalid;                  //read address valid
+    logic [2:0] arprot;             //read protection, 3 bit wide. Defaulted to 0 for axi4-lite
+    logic arready;                  //read address ready
     //read data channel signals
-    logic [DATA_WIDTH-1:0] RDATA;
-    logic [1:0] RRESP;
-    logic RVALID;
-    logic RREADY;
+    logic [DATA_WIDTH-1:0] rdata;   //read data
+    logic [1:0] rresp;              //read response
+    logic rvalid;                   //read data valid
+    logic rready;                   //read data ready
 
     modport master(
-        output AWADDR,
-        output AWVALID,
-        output AWPROT,
-        input AWREADY,
-        output WDATA,
-        output WSTRB,
-        output WVALID,
-        input WREADY,
-        input BRESP,
-        input BVALID,
-        output BREADY,
-        output ARADDR,
-        output ARVALID,
-        output ARPROT,
-        input ARREADY,
-        input RDATA,
-        input RRESP,
-        input RVALID,
-        output RREADY,
-        input aclk,
-        input aresetn
+        output awaddr, awvalid, awprot, wdata, wstrb, wvalid, bready, araddr, arvalid, arprot, rready,
+        input awready, wready, bresp, bvalid, arready, rdata, rresp, rvalid, aclk, aresetn
     );
 
     modport slave(
-        input AWADDR,
-        input AWVALID,
-        input AWPROT,
-        output AWREADY,
-        input WDATA,
-        input WSTRB,
-        input WVALID,
-        output WREADY,
-        output BRESP,
-        output BVALID,
-        input BREADY,
-        input ARADDR,
-        input ARVALID,
-        input ARPROT,
-        output ARREADY,
-        output RDATA,
-        output RRESP,
-        output RVALID,
-        input RREADY,
-        input aclk,
-        input aresetn
+        input awaddr, awvalid, awprot, wdata, wstrb, wvalid, bready, araddr, arvalid, arprot, rready, aclk, aresetn,
+        output awready, wready, bresp, bvalid, arready, rdata, rresp, rvalid
+        
     );
 
 endinterface
