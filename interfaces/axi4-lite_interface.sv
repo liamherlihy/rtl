@@ -11,7 +11,7 @@ interface axi4_lite #(
     //write address channel signals - done
     logic [ADDR_WIDTH-1:0] awaddr;  //write address
     logic awvalid;                  //address write valid
-    logic [2:0] awprot;             //write protection, 3 bit wide
+    //logic [2:0] awprot;             //write protection, 3 bit wide
     logic awready;                  //address write ready
     //wirte data channel signals
     logic [DATA_WIDTH-1:0] wdata;   //write data
@@ -25,7 +25,7 @@ interface axi4_lite #(
     //read address channel signals
     logic [ADDR_WIDTH-1:0] araddr;  //read address
     logic arvalid;                  //read address valid
-    logic [2:0] arprot;             //read protection, 3 bit wide. Defaulted to 0 for axi4-lite
+    //logic [2:0] arprot;             //read protection, 3 bit wide. Defaulted to 0 for axi4-lite
     logic arready;                  //read address ready
     //read data channel signals
     logic [DATA_WIDTH-1:0] rdata;   //read data
@@ -34,13 +34,15 @@ interface axi4_lite #(
     logic rready;                   //read data ready
 
     modport master(
-        output awaddr, awvalid, awprot, wdata, wstrb, wvalid, bready, araddr, arvalid, arprot, rready,
+        output awaddr, awvalid, wdata, wstrb, wvalid, bready, araddr, arvalid, rready,
         input awready, wready, bresp, bvalid, arready, rdata, rresp, rvalid, aclk, aresetn
+        //output awprot, arprot
     );
 
     modport slave(
-        input awaddr, awvalid, awprot, wdata, wstrb, wvalid, bready, araddr, arvalid, arprot, rready, aclk, aresetn,
+        input awaddr, awvalid, wdata, wstrb, wvalid, bready, araddr, arvalid, rready, aclk, aresetn,
         output awready, wready, bresp, bvalid, arready, rdata, rresp, rvalid
+        //input awprot, arprot
         
     );
 
