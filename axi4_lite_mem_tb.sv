@@ -64,18 +64,17 @@ module tb_axi4_lite_memory;
     wire [DATA_WIDTH-1:0] read_data_reg;
     //task read_data (input logic [DATA_WIDTH-1:0]addr, output [DATA_WIDTH-1:0] read_data_reg);
     task read_data (input logic [DATA_WIDTH-1:0]addr);
-        
+        //$display("reading data from %d at time: %0t",addr, $time);
         axi_if.araddr = addr;
         axi_if.arvalid = 1;
         axi_if.rready = 1;
         //$display("read: %h, expected: %h at time %t", read_data_reg, axi_mem.memory[addr], $time);
         @(posedge clk);
-        $display("reading data from %d at time: %0t",addr, $time);
-        $display("read: %h, expected: %h at time %t", read_data_reg, axi_mem.memory[addr], $time);
+        //$display("read: %h, expected: %h at time %t", read_data_reg, axi_mem.memory[addr], $time);
     endtask
     
     task clear_read();
-        $display("clearing write signals at time: %0t", $time);
+        //$display("clearing write signals at time: %0t", $time);
         axi_if.araddr = 0;
         axi_if.arvalid = 0;
         axi_if.rready = 0;
@@ -90,6 +89,12 @@ module tb_axi4_lite_memory;
             read_data_reg = 0;  
     end
     */
+    
+    always @(posedge clk) begin
+        if(axi_if.rvalid)
+            $display("read back %h at time %t", axi_if.rdata, $time);        
+    end  
+    
     assign read_data_reg = axi_if.rvalid ? axi_if.rdata : 32'h0000_0000;
     
     initial begin
@@ -119,7 +124,7 @@ module tb_axi4_lite_memory;
         //READ TESTING
         //------------------------------------------------
         $display("------------------------------------------------");
-        $display("staggered writes");
+        $display("staggered reads");
         $display("------------------------------------------------");
         //read_data(32'h0000_0000, read_data_reg);
         read_data(32'h0000_0000);
@@ -137,7 +142,7 @@ module tb_axi4_lite_memory;
         @(posedge clk); @(posedge clk);
         
         $display("------------------------------------------------");
-        $display("back-to-back writes");
+        $display("back-to-back reads");
         $display("------------------------------------------------");
         //read_data(32'h0000_0000, read_data_reg);
         //read_data(32'h0000_0001, read_data_reg);

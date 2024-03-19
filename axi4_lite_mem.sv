@@ -20,7 +20,6 @@ module axi4_lite_mem #(
     //when we reset, we want to set the first memory location to 0xdeadbeef for debug
     always_ff @(posedge clk) begin
         if (reset) begin
-            memory[0] <= 32'hdeadbeef; //bit 0 is reset.
             write_addr_buff <= 0;
             write_data_buffer <= 0;
             read_addr_buff <= 0;
@@ -41,7 +40,9 @@ module axi4_lite_mem #(
     //--------------------------------------------------------------------------------      
     //write address handling
     always_ff @(posedge clk) begin
-        if(axi4_s.awready && axi4_s.wready && ~reset) begin
+        if(reset)
+            memory[0] <= 32'hdeadbeef; //bit 0 is reset.
+        else if(axi4_s.awready && axi4_s.wready && ~reset) begin
             memory[write_addr_buff] <= write_data_buffer;
         end
     end
@@ -68,18 +69,18 @@ module axi4_lite_mem #(
     //read address handing
     always_ff @(posedge clk) begin
         if(reset) begin
-            //axi4_s.rdata <= 0;
+            axi4_s.rdata <= 0;
             axi4_s.rvalid <= 0;
-            read_data_buffer_out <= 0;
+            //read_data_buffer_out <= 0;
         end
         else if(axi4_s.arready) begin
-            //axi4_s.rdata <= read_data_buffer;
-            read_data_buffer_out <= read_data_buffer;
+            axi4_s.rdata <= read_data_buffer;
+            //read_data_buffer_out <= read_data_buffer;
             axi4_s.rvalid <= 1;
         end
         else begin
             axi4_s.rvalid <= 0;
-            read_data_buffer_out <= 0;
+            //read_data_buffer_out <= 0;
         end
     end
 
@@ -108,6 +109,6 @@ module axi4_lite_mem #(
     assign axi4_s.bresp = 2'b00; //write response OK
     assign axi4_s.rresp = 2'b00; //read response OK
     //assign axi4_s.rvalid = axi4_s.rready;
-    assign axi4_s.rdata = read_data_buffer_out;
+    //assign axi4_s.rdata = read_data_buffer;
 
 endmodule
