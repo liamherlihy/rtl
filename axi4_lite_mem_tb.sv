@@ -26,14 +26,14 @@ module tb_axi4_lite_memory;
         rst_n = 0;
         axi_if.awaddr = 0;	
         axi_if.awvalid = 0;	
-        axi_if.awprot = 0;	 
+        //axi_if.awprot = 0;	 
         axi_if.wdata = 0;  
         axi_if.wstrb = 0;   
         axi_if.wvalid = 0;  
         axi_if.bready = 0;  
         axi_if.araddr = 0;  
         axi_if.arvalid = 0; 
-        axi_if.arprot = 0;  
+        //axi_if.arprot = 0;  
         axi_if.rready = 0; 
         #20;   // Hold reset for a bit
         rst_n = 1;
